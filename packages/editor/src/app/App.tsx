@@ -7,7 +7,7 @@ import { colors } from "@seanchas116/paintkit/src/components/Palette";
 import { Editor } from "../views/Editor";
 import { AppEditorState } from "./AppEditorState";
 import { File } from "./File";
-import { TabBar } from "./TabBar";
+import { TabBarArea } from "./TabBarArea";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -67,7 +67,7 @@ export const App: React.FC<{
       <GlobalStyle />
       <PaintkitRoot colorScheme="auto">
         <AppWrap>
-          <TabBar editorState={editorState} />
+          <TabBarArea editorState={editorState} />
           <StyledEditor editorState={editorState} />
         </AppWrap>
       </PaintkitRoot>

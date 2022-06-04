@@ -1,67 +1,135 @@
-import {
-  IconButton,
-  PlusButton,
-} from "@seanchas116/paintkit/src/components/IconButton";
-import { colors } from "@seanchas116/paintkit/src/components/Palette";
 import React from "react";
-import styled from "styled-components";
-import menuIcon from "@iconify-icons/ic/outline-menu";
-import { Dropdown } from "@seanchas116/paintkit/src/components/menu/Dropdown";
-import { ToolButton } from "@seanchas116/paintkit/src/components/toolbar/ToolButton";
-import { useEditorState } from "../views/useEditorState";
-import { EditorState } from "../state/EditorState";
+import styled, { css } from "styled-components";
+import { ReactSortable } from "react-sortablejs";
+//import closeIcon from "@material-icons/svg/svg/close/outline.svg";
+import closeIcon from "@iconify-icons/ic/outline-close";
+import { colors } from "@seanchas116/paintkit/src/components/Palette";
+import {
+  iconToSVGString,
+  svgToDataURL,
+} from "@seanchas116/paintkit/src/util/Image";
 
-const Tab = styled.div`
+const closeIconSVG = svgToDataURL(iconToSVGString(closeIcon));
+
+export interface TabItem {
+  id: string;
+  text: string;
+  modified: boolean;
+}
+
+export const TabBar: React.VFC<{
+  className?: string;
+  tabs: TabItem[];
+  currentID?: string;
+  onTabsChange: (tabs: TabItem[]) => void;
+  onCurrentIDChange: (id: string) => void;
+  onCloseClick: (id: string) => void;
+}> = ({
+  className,
+  tabs,
+  currentID,
+  onTabsChange,
+  onCurrentIDChange,
+  onCloseClick,
+}) => {
+  return (
+    <TabBarSortable
+      list={tabs}
+      setList={onTabsChange}
+      animation={100}
+      className={className}
+    >
+      {tabs.map((tab) => (
+        <Tab
+          key={tab.id}
+          selected={tab.id === currentID}
+          onMouseDown={() => onCurrentIDChange(tab.id)}
+        >
+          {tab.text}
+          <CloseButton
+            modified={tab.modified}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCloseClick(tab.id);
+            }}
+          />
+        </Tab>
+      ))}
+    </TabBarSortable>
+  );
+};
+
+const CloseButton = styled.button<{ modified: boolean }>`
+  width: 16px;
+  height: 16px;
+  mask-image: url(${closeIconSVG});
+  mask-size: 12px;
+  mask-repeat: no-repeat;
+  mask-position: center;
   color: ${colors.label};
-  font-weight: 500;
-  height: 32px;
-  line-height: 32px;
-  padding: 0 20px;
+  background: currentColor;
+  position: relative;
 
-  border-right: 2px solid ${colors.separator};
+  ${(p) =>
+    p.modified &&
+    css`
+      :not(:hover) {
+        mask-image: none;
+        background: none;
+        ::before {
+          content: "";
+          position: absolute;
+          left: 4px;
+          right: 4px;
+          top: 4px;
+          bottom: 4px;
+          border-radius: 50%;
+          background-color: currentColor;
+        }
+      }
+    `}
 
-  &[aria-selected="true"] {
-    color: ${colors.text};
-    border-bottom: 2px solid ${colors.active};
+  :hover {
+    transform: scale(1.2);
   }
 `;
 
-const TabBarWrap = styled.div`
-  height: 32px;
-  background-color: #181818;
-  display: flex;
-  font-size: 12px;
-`;
+const Tab = styled.div<{ selected: boolean }>`
+  padding: 8px 8px 6px 16px;
+  line-height: 16px;
+  color: ${colors.label};
 
-const MenuArea = styled.div`
-  width: 42px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-right: 2px solid ${colors.separator};
+  gap: 6px;
+
+  position: relative;
+
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+
+  ${(p) =>
+    p.selected &&
+    css`
+      ::before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: -1px;
+        right: -1px;
+        top: 0;
+        height: 2px;
+        background: ${colors.active};
+      }
+
+      border-left: 1px solid ${colors.background};
+      border-right: 1px solid ${colors.background};
+      background: ${colors.background};
+      color: ${colors.text};
+    `}
 `;
 
-export const TabBar: React.FC<{ editorState: EditorState }> = ({
-  editorState,
-}) => {
-  return (
-    <TabBarWrap>
-      <MenuArea>
-        <Dropdown
-          options={editorState.getMainMenu()}
-          button={(open, onClick) => (
-            <ToolButton
-              label="Menu"
-              icon={menuIcon}
-              selected={open}
-              onClick={(_, elem) => onClick(elem)}
-            />
-          )}
-        />
-      </MenuArea>
-      <Tab aria-selected>File1.macaron</Tab>
-      <Tab>File2.macaron</Tab>
-      <Tab>File3.macaron</Tab>
-    </TabBarWrap>
-  );
-};
+const TabBarSortable = styled(ReactSortable)`
+  display: flex;
+  height: 30px;
+`;
