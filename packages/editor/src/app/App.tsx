@@ -67,7 +67,7 @@ export const App: React.FC<{
       <GlobalStyle />
       <PaintkitRoot colorScheme="auto">
         <AppWrap>
-          <TabBar />
+          <TabBar editorState={editorState} />
           <StyledEditor editorState={editorState} />
         </AppWrap>
       </PaintkitRoot>
