@@ -105,25 +105,19 @@ const Tab = styled.div<{ selected: boolean }>`
 
   position: relative;
 
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
+  border-left: 2px solid ${colors.separator};
+  border-bottom: 2px solid transparent;
+
+  cursor: pointer;
+
+  :hover {
+    color: ${colors.text};
+  }
 
   ${(p) =>
     p.selected &&
     css`
-      ::before {
-        content: "";
-        display: block;
-        position: absolute;
-        left: -1px;
-        right: -1px;
-        top: 0;
-        height: 2px;
-        background: ${colors.active};
-      }
-
-      border-left: 1px solid ${colors.background};
-      border-right: 1px solid ${colors.background};
+      border-bottom: 2px solid ${colors.active};
       background: ${colors.background};
       color: ${colors.text};
     `}
@@ -131,5 +125,5 @@ const Tab = styled.div<{ selected: boolean }>`
 
 const TabBarSortable = styled(ReactSortable)`
   display: flex;
-  height: 30px;
+  height: 32px;
 `;
