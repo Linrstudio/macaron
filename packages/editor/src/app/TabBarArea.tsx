@@ -12,6 +12,10 @@ const TabBarWrap = styled.div`
   background-color: #1d1d1d;
   display: flex;
   font-size: 12px;
+
+  > *:last-child {
+    flex: 1;
+  }
 `;
 
 const MenuArea = styled.div`
