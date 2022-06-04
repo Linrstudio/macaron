@@ -9,7 +9,7 @@ import { TabBar } from "./TabBar";
 
 const TabBarWrap = styled.div`
   height: 32px;
-  background-color: #181818;
+  background-color: #1d1d1d;
   display: flex;
   font-size: 12px;
 `;
