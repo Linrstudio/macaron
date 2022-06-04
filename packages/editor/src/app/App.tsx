@@ -3,9 +3,11 @@ import { PaintkitRoot } from "@seanchas116/paintkit/src/components/PaintkitRoot"
 import { reaction } from "mobx";
 import styled, { createGlobalStyle } from "styled-components";
 import { fontFamily } from "@seanchas116/paintkit/src/components/Common";
+import { colors } from "@seanchas116/paintkit/src/components/Palette";
 import { Editor } from "../views/Editor";
 import { AppEditorState } from "./AppEditorState";
 import { File } from "./File";
+import { TabBar } from "./TabBar";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -23,11 +25,22 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const StyledEditor = styled(Editor)`
+  border-top: 2px solid ${colors.separator};
+`;
+
+const AppWrap = styled.div`
   position: fixed;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: ${colors.background};
+
+  > :last-child {
+    flex: 1;
+  }
 `;
 
 export const App: React.FC<{
@@ -53,7 +66,10 @@ export const App: React.FC<{
     <>
       <GlobalStyle />
       <PaintkitRoot colorScheme="auto">
-        <StyledEditor editorState={editorState} />
+        <AppWrap>
+          <TabBar />
+          <StyledEditor editorState={editorState} />
+        </AppWrap>
       </PaintkitRoot>
     </>
   );
