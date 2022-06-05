@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { PaintkitRoot } from "@seanchas116/paintkit/src/components/PaintkitRoot";
 import styled, { createGlobalStyle } from "styled-components";
 import { fontFamily } from "@seanchas116/paintkit/src/components/Common";
 import { colors } from "@seanchas116/paintkit/src/components/Palette";
 import { observer } from "mobx-react-lite";
+import { action } from "mobx";
 import { Editor } from "../views/Editor";
 import { TabBarArea } from "./TabBarArea";
 import { AppState } from "./AppState";
@@ -53,6 +54,27 @@ export const App: React.FC<{
   // useEffect(() => editorState.listenKeyEvents(window), [editorState]);
 
   const editorState = appState.currentEditorState;
+
+  useEffect(() => {
+    const onWindowKeyDown = action((e: KeyboardEvent) => {
+      if (appState.handleGlobalKeyDown(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+    const onWindowKeyUp = action((e: KeyboardEvent) => {
+      appState.handleGlobalKeyUp(e);
+    });
+
+    window.addEventListener("keydown", onWindowKeyDown, { capture: true });
+    window.addEventListener("keyup", onWindowKeyUp, { capture: true });
+    return () => {
+      window.removeEventListener("keydown", onWindowKeyDown, {
+        capture: true,
+      });
+      window.removeEventListener("keyup", onWindowKeyUp, { capture: true });
+    };
+  });
 
   return (
     <>

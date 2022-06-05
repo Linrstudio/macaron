@@ -94,4 +94,16 @@ export class AppState {
       ...(this.currentEditorState?.getMainMenu() ?? []),
     ];
   }
+
+  handleGlobalKeyDown(e: KeyboardEvent): boolean {
+    if (MenuItem.handleShortcut(this.getFileMenu(), e)) {
+      return true;
+    }
+
+    return this.currentEditorState?.handleGlobalKeyDown(e) ?? false;
+  }
+
+  handleGlobalKeyUp(e: KeyboardEvent): void {
+    this.currentEditorState?.handleGlobalKeyUp(e);
+  }
 }

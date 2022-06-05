@@ -291,7 +291,7 @@ export abstract class EditorState {
     ];
   }
 
-  protected handleGlobalKeyDown(e: KeyboardEvent): boolean {
+  handleGlobalKeyDown(e: KeyboardEvent): boolean {
     switch (e.key) {
       case "Escape":
         this.insertMode = undefined;
@@ -341,7 +341,7 @@ export abstract class EditorState {
     return false;
   }
 
-  protected handleGlobalKeyUp(e: KeyboardEvent): void {
+  handleGlobalKeyUp(e: KeyboardEvent): void {
     switch (e.key) {
       case "Alt":
         this.measureMode = false;
