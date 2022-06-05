@@ -1,15 +1,23 @@
 import { MenuItem } from "@seanchas116/paintkit/src/components/menu/Menu";
 import { JSONUndoHistory } from "@seanchas116/paintkit/src/util/JSONUndoHistory";
 import { KeyGesture } from "@seanchas116/paintkit/src/util/KeyGesture";
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, makeObservable } from "mobx";
 import { DocumentJSON, Document } from "../models/Document";
 import { EditorState } from "../state/EditorState";
 import { File } from "./File";
+import { FileList } from "./FileList";
 
-class TabEditorState extends EditorState {
-  constructor(file: File) {
+class FileEditorState extends EditorState {
+  private static instances = new WeakMap<File, FileEditorState>();
+
+  static get(file: File): FileEditorState {
+    return FileEditorState.instances.get(file) ?? new FileEditorState(file);
+  }
+
+  private constructor(file: File) {
     super();
     this.file = file;
+    FileEditorState.instances.set(file, this);
   }
 
   readonly file: File;
@@ -19,23 +27,19 @@ class TabEditorState extends EditorState {
   }
 }
 
-export class TabState {
-  constructor() {}
-
-  file = new File();
-  editorState = new TabEditorState(this.file);
-}
-
 export class AppState {
-  constructor() {
+  constructor(fileList: FileList) {
     makeObservable(this);
+    this.fileList = fileList;
   }
 
-  readonly tabStates = observable.array<TabState>();
-  @observable currentTabStateIndex = 0;
+  readonly fileList: FileList;
 
-  @computed get currentTabState(): TabState | undefined {
-    return this.tabStates[this.currentTabStateIndex];
+  get currentEditorState(): FileEditorState | undefined {
+    const file = this.fileList.currentFile;
+    if (file) {
+      return FileEditorState.get(file);
+    }
   }
 
   getFileMenu(): MenuItem[] {
@@ -44,7 +48,7 @@ export class AppState {
         text: "New",
         shortcut: [new KeyGesture(["Command"], "KeyN")],
         onClick: action(() => {
-          this.tabStates.push(new TabState());
+          void this.fileList.newFile();
           return true;
         }),
       },
@@ -55,12 +59,7 @@ export class AppState {
         text: "Open...",
         shortcut: [new KeyGesture(["Command"], "KeyO")],
         onClick: action(() => {
-          const tabState = new TabState();
-          void tabState.file.open().then(
-            action(() => {
-              this.tabStates.push(tabState);
-            })
-          );
+          void this.fileList.openFile();
           return true;
         }),
       },
@@ -71,7 +70,7 @@ export class AppState {
         text: "Save",
         shortcut: [new KeyGesture(["Command"], "KeyS")],
         onClick: action(() => {
-          void this.currentTabState?.file.save();
+          void this.fileList.currentFile?.save();
           return true;
         }),
       },
@@ -79,7 +78,7 @@ export class AppState {
         text: "Save As...",
         shortcut: [new KeyGesture(["Shift", "Command"], "KeyS")],
         onClick: action(() => {
-          void this.currentTabState?.file.saveAs();
+          void this.fileList.currentFile?.saveAs();
           return true;
         }),
       },
@@ -92,7 +91,7 @@ export class AppState {
         text: "File",
         children: this.getFileMenu(),
       },
-      ...(this.currentTabState?.editorState.getMainMenu() ?? []),
+      ...(this.currentEditorState?.getMainMenu() ?? []),
     ];
   }
 }
