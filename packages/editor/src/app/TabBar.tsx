@@ -17,7 +17,7 @@ export interface TabItem {
   modified: boolean;
 }
 
-export const TabBar: React.VFC<{
+export const TabBar: React.FC<{
   className?: string;
   tabs: TabItem[];
   currentID?: string;
