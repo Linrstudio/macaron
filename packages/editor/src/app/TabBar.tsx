@@ -105,8 +105,7 @@ const Tab = styled.div<{ selected: boolean }>`
 
   position: relative;
 
-  border-left: 2px solid ${colors.separator};
-  border-bottom: 2px solid transparent;
+  border-right: 2px solid ${colors.separator};
 
   cursor: pointer;
 
@@ -117,7 +116,17 @@ const Tab = styled.div<{ selected: boolean }>`
   ${(p) =>
     p.selected &&
     css`
-      border-bottom: 2px solid ${colors.active};
+      ::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: -2px;
+        left: -2px;
+        right: -2px;
+        height: 2px;
+        background: ${colors.active};
+      }
+
       background: ${colors.background};
       color: ${colors.text};
     `}
