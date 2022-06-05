@@ -1,4 +1,4 @@
-import { computed, makeObservable, observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { File } from "./File";
 
 export class FileList {
@@ -6,31 +6,35 @@ export class FileList {
     makeObservable(this);
   }
 
-  readonly files = observable.array<File>();
-  @observable currentFileIndex = 0;
+  private readonly _files = observable.array<File>();
+  @observable _currentFile: File | undefined = undefined;
 
-  @computed get currentFile(): File | undefined {
-    if (this.currentFileIndex < this.files.length) {
-      return this.files[this.currentFileIndex];
-    }
+  get files(): readonly File[] {
+    return this._files;
+  }
+
+  get currentFile(): File | undefined {
+    return this._currentFile;
   }
 
   newFile(): File {
     console.log("new file");
     const file = new File();
-    this.files.push(file);
+    this._files.push(file);
+    this._currentFile = file;
     return file;
   }
 
   async openFile(): Promise<File> {
     const file = new File();
     await file.open();
-    this.files.push(file);
+    this._files.push(file);
+    this._currentFile = file;
     return file;
   }
 
   get hasUnsavedChanges(): boolean {
-    for (const file of this.files) {
+    for (const file of this._files) {
       if (file.history.isModified) {
         return true;
       }
