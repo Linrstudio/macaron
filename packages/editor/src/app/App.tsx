@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { PaintkitRoot } from "@seanchas116/paintkit/src/components/PaintkitRoot";
-import { reaction } from "mobx";
 import styled, { createGlobalStyle } from "styled-components";
 import { fontFamily } from "@seanchas116/paintkit/src/components/Common";
 import { colors } from "@seanchas116/paintkit/src/components/Palette";
+import { observer } from "mobx-react-lite";
 import { Editor } from "../views/Editor";
-import { AppEditorState } from "./AppEditorState";
-import { File } from "./File";
 import { TabBarArea } from "./TabBarArea";
+import { AppState } from "./AppState";
+import { FileList } from "./FileList";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -44,33 +44,25 @@ const AppWrap = styled.div`
 `;
 
 export const App: React.FC<{
-  file: File;
-}> = ({ file }) => {
-  const editorState = useMemo(() => {
-    return new AppEditorState(file);
-  }, [file]);
+  fileList: FileList;
+}> = observer(({ fileList }) => {
+  const appState = useMemo(() => {
+    return new AppState(fileList);
+  }, [fileList]);
 
-  useEffect(() => {
-    return reaction(
-      () => editorState.windowTitle,
-      (title) => {
-        document.title = title;
-      },
-      { fireImmediately: true }
-    );
-  }, [editorState]);
+  // useEffect(() => editorState.listenKeyEvents(window), [editorState]);
 
-  useEffect(() => editorState.listenKeyEvents(window), [editorState]);
+  const editorState = appState.currentEditorState;
 
   return (
     <>
       <GlobalStyle />
       <PaintkitRoot colorScheme="auto">
         <AppWrap>
-          <TabBarArea editorState={editorState} />
-          <StyledEditor editorState={editorState} />
+          <TabBarArea appState={appState} />
+          {editorState ? <StyledEditor editorState={editorState} /> : <div />}
         </AppWrap>
       </PaintkitRoot>
     </>
   );
-};
+});

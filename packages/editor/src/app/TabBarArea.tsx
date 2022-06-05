@@ -4,8 +4,8 @@ import styled from "styled-components";
 import menuIcon from "@iconify-icons/ic/outline-menu";
 import { Dropdown } from "@seanchas116/paintkit/src/components/menu/Dropdown";
 import { ToolButton } from "@seanchas116/paintkit/src/components/toolbar/ToolButton";
-import { EditorState } from "../state/EditorState";
 import { TabBar } from "./TabBar";
+import { AppState } from "./AppState";
 
 const TabBarWrap = styled.div`
   height: 32px;
@@ -26,9 +26,7 @@ const MenuArea = styled.div`
   border-right: 2px solid ${colors.separator};
 `;
 
-export const TabBarArea: React.FC<{ editorState: EditorState }> = ({
-  editorState,
-}) => {
+export const TabBarArea: React.FC<{ appState: AppState }> = ({ appState }) => {
   const [tabs, setTabs] = useState([
     { id: "1", text: "Tab 1", modified: false },
     { id: "2", text: "Tab 2", modified: true },
@@ -41,7 +39,7 @@ export const TabBarArea: React.FC<{ editorState: EditorState }> = ({
     <TabBarWrap>
       <MenuArea>
         <Dropdown
-          options={editorState.getMainMenu()}
+          options={appState.getMenu()}
           button={(open, onClick) => (
             <ToolButton
               label="Menu"

@@ -3,15 +3,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
-import { File } from "./File";
+import { FileList } from "./FileList";
 
-const file = new File();
+const fileList = new FileList();
 
 window.addEventListener("beforeunload", (e) => {
   e.preventDefault();
 
-  if (file.history.isModified) {
-    return (e.returnValue = "Are you sure you want to exit?");
+  if (fileList.hasUnsavedChanges) {
+    return (e.returnValue =
+      "You have unsaved changes. Are you sure you want to leave?");
   }
 });
 
@@ -21,7 +22,7 @@ document.body.append(rootElem);
 let root = ReactDOM.createRoot(rootElem);
 root.render(
   <React.StrictMode>
-    <App file={file} />
+    <App fileList={fileList} />
   </React.StrictMode>
 );
 
@@ -33,7 +34,7 @@ if (import.meta.hot) {
     const NextApp = (await import("./App")).App;
     root.render(
       <React.StrictMode>
-        <NextApp file={file} />
+        <NextApp fileList={fileList} />
       </React.StrictMode>
     );
   });

@@ -10,10 +10,13 @@ export class FileList {
   @observable currentFileIndex = 0;
 
   @computed get currentFile(): File | undefined {
-    return this.files[this.currentFileIndex];
+    if (this.currentFileIndex < this.files.length) {
+      return this.files[this.currentFileIndex];
+    }
   }
 
   newFile(): File {
+    console.log("new file");
     const file = new File();
     this.files.push(file);
     return file;
@@ -24,5 +27,15 @@ export class FileList {
     await file.open();
     this.files.push(file);
     return file;
+  }
+
+  get hasUnsavedChanges(): boolean {
+    for (const file of this.files) {
+      if (file.history.isModified) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

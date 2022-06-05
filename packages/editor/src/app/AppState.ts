@@ -1,7 +1,7 @@
 import { MenuItem } from "@seanchas116/paintkit/src/components/menu/Menu";
 import { JSONUndoHistory } from "@seanchas116/paintkit/src/util/JSONUndoHistory";
 import { KeyGesture } from "@seanchas116/paintkit/src/util/KeyGesture";
-import { action, makeObservable } from "mobx";
+import { action, computed, makeObservable } from "mobx";
 import { DocumentJSON, Document } from "../models/Document";
 import { EditorState } from "../state/EditorState";
 import { File } from "./File";
@@ -35,7 +35,7 @@ export class AppState {
 
   readonly fileList: FileList;
 
-  get currentEditorState(): FileEditorState | undefined {
+  @computed get currentEditorState(): FileEditorState | undefined {
     const file = this.fileList.currentFile;
     if (file) {
       return FileEditorState.get(file);
