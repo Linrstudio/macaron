@@ -1,5 +1,6 @@
 import { JSONUndoHistory } from "@seanchas116/paintkit/src/util/JSONUndoHistory";
 import { computed, makeObservable, observable, runInAction } from "mobx";
+import shortUUID from "short-uuid";
 import { Document, DocumentJSON } from "../models/Document";
 import { parseDocument, stringifyDocument } from "../fileFormat/document";
 
@@ -18,6 +19,7 @@ export class File {
   constructor() {
     makeObservable(this);
   }
+  readonly key = shortUUID.generate();
 
   @observable.ref history = new JSONUndoHistory<DocumentJSON, Document>(
     new Document()

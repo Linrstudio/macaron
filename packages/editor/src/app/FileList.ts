@@ -17,6 +17,16 @@ export class FileList {
     return this._currentFile;
   }
 
+  setFiles(files: File[]): void {
+    // TODO: fix currentFile
+    this._files.replace(files);
+  }
+
+  setCurrentFile(file: File | undefined): void {
+    // TODO: check existence
+    this._currentFile = file;
+  }
+
   newFile(): File {
     console.log("new file");
     const file = new File();
