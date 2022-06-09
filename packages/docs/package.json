@@ -10,15 +10,16 @@
     "dev": "vitepress dev .",
     "serve": "vitepress serve . --port 4001"
   },
+  "dependencies": {
+    "@fontsource/readex-pro": "^4.5.9",
+    "@macaron-elements/compiler": "*",
+    "codemirror": "^5.65.5",
+    "monaco-editor": "^0.33.0"
+  },
   "devDependencies": {
     "@macaron-elements/editor": "*",
     "@macaron-elements/loader-vite": "*",
+    "@macaron-elements/vscode": "*",
     "vitepress": "^1.0.0-alpha.1"
-  },
-  "dependencies": {
-    "@macaron-elements/compiler": "*",
-    "@fontsource/readex-pro": "^4.5.9",
-    "codemirror": "^5.65.5",
-    "monaco-editor": "^0.33.0"
   }
 }
